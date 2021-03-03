@@ -18,28 +18,36 @@ class PlacesListScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Consumer<GreatPlaces>(
-        child: Center(
-          child: const Text('Got no places yes, start adding some'),
-        ),
-        builder: (ctx, greatPlaces, ch) => greatPlaces.item.length <= 0
-            ? ch
-            : ListView.builder(
-                itemCount: greatPlaces.item.length,
-                itemBuilder: (ctx, i) => ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: FileImage(
-                      greatPlaces.item[i].image,
-                    ),
-                  ),
-                  title: Text(
-                    greatPlaces.item[i].title,
-                  ),
-                  onTap: ()
-                  {
-                    // Goto Detail Page ...
-                  },
+      body: FutureBuilder(
+        future: Provider.of<GreatPlaces>(context, listen: false)
+            .fetchAndSetPlaces(),
+        builder: (ctx, snapshot) => snapshot.connectionState ==
+                ConnectionState.waiting
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Consumer<GreatPlaces>(
+                child: Center(
+                  child: const Text('Got no places yes, start adding some'),
                 ),
+                builder: (ctx, greatPlaces, ch) => greatPlaces.item.length <= 0
+                    ? ch
+                    : ListView.builder(
+                        itemCount: greatPlaces.item.length,
+                        itemBuilder: (ctx, i) => ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: FileImage(
+                              greatPlaces.item[i].image,
+                            ),
+                          ),
+                          title: Text(
+                            greatPlaces.item[i].title,
+                          ),
+                          onTap: () {
+                            // Goto Detail Page ...
+                          },
+                        ),
+                      ),
               ),
       ),
     );
