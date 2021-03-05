@@ -23,11 +23,14 @@ class GreatPlaces with ChangeNotifier {
     notifyListeners();
 
     //  Adding Data to SQFLite DataBase
-    DBHelper.insert('user_places', {
-      'id': newPlace.id,
-      'title': newPlace.title,
-      'image': newPlace.image.path,
-    });
+    DBHelper.insert(
+      'user_places',
+      {
+        'id': newPlace.id,
+        'title': newPlace.title,
+        'image': newPlace.image.path,
+      },
+    );
   }
 
   Future<void> fetchAndSetPlaces() async {
