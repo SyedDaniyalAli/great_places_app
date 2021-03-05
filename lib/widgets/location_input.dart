@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/map_screen.dart';
 import 'package:location/location.dart';
 import '../helpers/location_helper.dart';
 
@@ -17,9 +18,27 @@ class _LocationInputState extends State<LocationInput> {
     // print(locData.longitude);
     // print(locData.latitude);
     setState(() {
-      _imagePreviewUrl= staticMapImageUrl;
+      _imagePreviewUrl = staticMapImageUrl;
       print(_imagePreviewUrl);
     });
+  }
+
+  // We are using async here because we want to get the selected location back when the screen pop (we can use .then() method or simply use await)
+  Future<void> _selectOnMap() async {
+    final selectedLocation = await Navigator.of(context).push(
+      MaterialPageRoute(
+        //It will make the cross icon instead of (back icon) for back
+        fullscreenDialog: true,
+        builder: (ctx) => MapScreen(
+          isSelecting: true,
+        ),
+      ),
+    );
+
+    if (selectedLocation == null) {
+      return;
+    }
+    //  ....
   }
 
   @override
@@ -55,7 +74,7 @@ class _LocationInputState extends State<LocationInput> {
             ),
           ),
           TextButton.icon(
-            onPressed: () {},
+            onPressed: _selectOnMap,
             icon: Icon(Icons.map),
             label: Text(
               'Select on Map',

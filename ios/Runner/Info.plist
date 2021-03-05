@@ -3,6 +3,8 @@
 <plist version="1.0">
 <dict>
     <key>NSLocationWhenInUseUsageDescription</key>
+    <string>[Your explanation here]</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
 	<string>Need Location!</string>
 	<key>NSLocationAlwaysUsageDescription</key>
     <string>Need Location!</string>
