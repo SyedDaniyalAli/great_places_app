@@ -35,7 +35,7 @@ class _MapScreenState extends State<MapScreen> {
       _pickedLocation = position;
 
       // Add a icon denoting current user location
-      if (_pickedLocation != null) {
+      if (_pickedLocation != null && !widget.isSelecting) {
         print(_pickedLocation);
         _controller.addSymbol(
           SymbolOptions(
@@ -44,7 +44,11 @@ class _MapScreenState extends State<MapScreen> {
             iconColor: '#006992',
 
             // YES, YOU STILL NEED TO PROVIDE A VALUE HERE!!!
-            geometry: position,
+            geometry: position ??
+                LatLng(
+                  widget.initialLocation.latitude,
+                  widget.initialLocation.longitude,
+                ),
           ),
         );
       }
