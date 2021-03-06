@@ -6,6 +6,10 @@ import 'package:location/location.dart';
 import '../helpers/location_helper.dart';
 
 class LocationInput extends StatefulWidget {
+  final Function onSelectPlace;
+
+  LocationInput(this.onSelectPlace);
+
   @override
   _LocationInputState createState() => _LocationInputState();
 }
@@ -13,10 +17,9 @@ class LocationInput extends StatefulWidget {
 class _LocationInputState extends State<LocationInput> {
   String _imagePreviewUrl;
 
-  Future<void> _getCurrentUserLocation() async {
-    final locData = await Location().getLocation();
+  void _showPreview(double latitude, double longitude) {
     final staticMapImageUrl = LocationHelper.generateLocationPreviewImage(
-        latitude: locData.latitude, longitude: locData.longitude);
+        latitude: latitude, longitude: longitude);
     // print(locData.longitude);
     // print(locData.latitude);
     setState(() {
@@ -25,6 +28,15 @@ class _LocationInputState extends State<LocationInput> {
     });
   }
 
+  Future<void> _getCurrentUserLocation() async {
+    try {
+      final locData = await Location().getLocation();
+      _showPreview(locData.latitude, locData.longitude);
+      widget.onSelectPlace(locData.latitude, locData.longitude);
+    } catch (e) {
+      return;
+    }
+  }
 
   // We are using async here because we want to get the selected location back when the screen pop (we can use .then() method or simply use await)
   Future<void> _selectOnMap() async {
@@ -32,10 +44,9 @@ class _LocationInputState extends State<LocationInput> {
       MaterialPageRoute(
         //It will make the cross icon instead of (back icon) for back
         fullscreenDialog: true,
-        builder: (ctx) =>
-            MapScreen(
-              isSelecting: true,
-            ),
+        builder: (ctx) => MapScreen(
+          isSelecting: true,
+        ),
       ),
     );
 
@@ -43,7 +54,8 @@ class _LocationInputState extends State<LocationInput> {
       return;
     }
     print(selectedLocation);
-    //  ....
+    _showPreview(selectedLocation.latitude, selectedLocation.longitude);
+    widget.onSelectPlace(selectedLocation.latitude, selectedLocation.longitude);
   }
 
   @override
@@ -62,10 +74,10 @@ class _LocationInputState extends State<LocationInput> {
         child: _imagePreviewUrl == null
             ? Text('No Location Chosen')
             : Image.network(
-          _imagePreviewUrl,
-          fit: BoxFit.cover,
-          width: double.infinity,
-        ),
+                _imagePreviewUrl,
+                fit: BoxFit.cover,
+                width: double.infinity,
+              ),
       ),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -75,9 +87,7 @@ class _LocationInputState extends State<LocationInput> {
             icon: Icon(Icons.location_on),
             label: Text(
               'Current Location',
-              style: TextStyle(color: Theme
-                  .of(context)
-                  .primaryColor),
+              style: TextStyle(color: Theme.of(context).primaryColor),
             ),
           ),
           TextButton.icon(
@@ -85,9 +95,7 @@ class _LocationInputState extends State<LocationInput> {
             icon: Icon(Icons.map),
             label: Text(
               'Select on Map',
-              style: TextStyle(color: Theme
-                  .of(context)
-                  .primaryColor),
+              style: TextStyle(color: Theme.of(context).primaryColor),
             ),
           ),
         ],

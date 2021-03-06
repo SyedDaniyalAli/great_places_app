@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:ffi';
+
+import 'package:http/http.dart' as http;
+
 // const GOOGLE_API_KEY = 'AIzaSyDq40kL5RrLefHsh2oWfV9rFSePqBLbG_M';
 
 const MAPBOX_API_KEY =
@@ -55,5 +60,16 @@ class LocationHelper {
     // 'https://maps.googleapis.com/maps/api/staticmap?'
     //   'center=&$latitude,$longitude&zoom=16&size=600x300&maptype=roadmap'
     //   '&markers=color:red%7Clabel:C%$latitude,$longitude&key=$GOOGLE_API_KEY';
+  }
+
+  static Future<String> getPlaceAddress(double lat, double lng) async {
+    final url =
+        'https://api.mapbox.com/geocoding/v5/mapbox.places/$lat,$lng.json?access_token=$MAPBOX_API_KEY';
+
+    final response = await http.get(url);
+
+      // print(json.decode(response.body)["features"][0]["place_name"]);
+
+    return json.decode(response.body)["features"][0]["place_name"]??"No address line available";
   }
 }
