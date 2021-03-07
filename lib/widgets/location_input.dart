@@ -31,6 +31,7 @@ class _LocationInputState extends State<LocationInput> {
   Future<void> _getCurrentUserLocation() async {
     try {
       final locData = await Location().getLocation();
+      print("Location Input: "+locData.latitude.toString()+","+locData.longitude.toString());
       _showPreview(locData.latitude, locData.longitude);
       widget.onSelectPlace(locData.latitude, locData.longitude);
     } catch (e) {
@@ -40,12 +41,14 @@ class _LocationInputState extends State<LocationInput> {
 
   // We are using async here because we want to get the selected location back when the screen pop (we can use .then() method or simply use await)
   Future<void> _selectOnMap() async {
+    final locData = await Location().getLocation();
     final selectedLocation = await Navigator.of(context).push<LatLng>(
       MaterialPageRoute(
         //It will make the cross icon instead of (back icon) for back
         fullscreenDialog: true,
         builder: (ctx) => MapScreen(
           isSelecting: true,
+          initialLocation: PlaceLocation(latitude: locData.latitude, longitude: locData.longitude, address: null),
         ),
       ),
     );
@@ -53,7 +56,7 @@ class _LocationInputState extends State<LocationInput> {
     if (selectedLocation == null) {
       return;
     }
-    print(selectedLocation);
+    print("Location Input: "+selectedLocation.latitude.toString()+","+selectedLocation.longitude.toString());
     _showPreview(selectedLocation.latitude, selectedLocation.longitude);
     widget.onSelectPlace(selectedLocation.latitude, selectedLocation.longitude);
   }

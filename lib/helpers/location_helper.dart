@@ -64,7 +64,7 @@ class LocationHelper {
 
   static Future<String> getPlaceAddress(double lat, double lng) async {
     final url =
-        'https://api.mapbox.com/geocoding/v5/mapbox.places/$lat,$lng.json?access_token=$MAPBOX_API_KEY';
+        'https://api.mapbox.com/geocoding/v5/mapbox.places/$lng,$lat.json?access_token=$MAPBOX_API_KEY';
 
     final response = await http.get(url);
 

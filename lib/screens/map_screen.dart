@@ -16,6 +16,7 @@ class MapScreen extends StatefulWidget {
       {this.initialLocation = const PlaceLocation(
         latitude: 37.422,
         longitude: -122.084,
+        address: null
       ),
       this.isSelecting = false});
 
@@ -28,15 +29,40 @@ class _MapScreenState extends State<MapScreen> {
 
   MapboxMapController _controller;
 
+
+  //Remove Previous Marker
+  void removePreviousMarker(Point<double> point, LatLng position)
+  {
+    _controller.removeSymbol(Symbol(point.toString(), SymbolOptions(
+      // You retrieve this value from the Mapbox Studio
+      iconImage: 'embassy-15',
+      iconColor: '#006992',
+
+      // YES, YOU STILL NEED TO PROVIDE A VALUE HERE!!!
+      geometry: position ??
+          LatLng(
+            widget.initialLocation.latitude,
+            widget.initialLocation.longitude,
+          ),
+    ),));
+  }
+
   // Selecting Location ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   void _selectLocation(Point<double> point, LatLng position) {
     setState(() {
       // print("Point: " + point.toString() + "Position: " + position.toString());
+
       _pickedLocation = position;
 
+
+      removePreviousMarker(point, position);
+
       // Add a icon denoting current user location
-      if (_pickedLocation != null && !widget.isSelecting) {
-        print(_pickedLocation);
+      if (position != null && widget.isSelecting) {
+        print("MapScreen: " +
+            position.longitude.toString() +
+            "," +
+            position.longitude.toString());
         _controller.addSymbol(
           SymbolOptions(
             // You retrieve this value from the Mapbox Studio
@@ -93,6 +119,11 @@ class _MapScreenState extends State<MapScreen> {
           // causes a sudden movement from the initial to 'new' camera position,
           // while animateCamera gives a smooth animated transition
           _controller = controller;
+          // _selectLocation(
+          //     //Fake Points
+          //     Point(2, 3),
+          //     LatLng(widget.initialLocation.latitude,
+          //         widget.initialLocation.longitude));
 
           // controller.animateCamera(
           //   CameraUpdate.newLatLng(

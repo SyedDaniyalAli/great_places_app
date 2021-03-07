@@ -12,6 +12,7 @@ class PlaceDetailScreen extends StatelessWidget {
     final id = ModalRoute.of(context).settings.arguments;
     final selectedPlace =
         Provider.of<GreatPlaces>(context, listen: false).findById(id);
+    print('Place Detail Screen:'+ selectedPlace.location.address.toString());
 
     return Scaffold(
       appBar: AppBar(

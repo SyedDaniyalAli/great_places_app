@@ -15,7 +15,7 @@ class GreatPlaces with ChangeNotifier {
 
   Place findById(String id)
   {
-   _items.firstWhere((place) =>  place.id==id);
+   return _items.firstWhere((place) =>  place.id==id);
   }
 
 
