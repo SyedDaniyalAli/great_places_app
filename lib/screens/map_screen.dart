@@ -30,23 +30,6 @@ class _MapScreenState extends State<MapScreen> {
   MapboxMapController _controller;
 
 
-  //Remove Previous Marker
-  void removePreviousMarker(Point<double> point, LatLng position)
-  {
-    _controller.removeSymbol(Symbol(point.toString(), SymbolOptions(
-      // You retrieve this value from the Mapbox Studio
-      iconImage: 'embassy-15',
-      iconColor: '#006992',
-
-      // YES, YOU STILL NEED TO PROVIDE A VALUE HERE!!!
-      geometry: position ??
-          LatLng(
-            widget.initialLocation.latitude,
-            widget.initialLocation.longitude,
-          ),
-    ),));
-  }
-
   // Selecting Location ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   void _selectLocation(Point<double> point, LatLng position) {
     setState(() {
@@ -54,8 +37,6 @@ class _MapScreenState extends State<MapScreen> {
 
       _pickedLocation = position;
 
-
-      removePreviousMarker(point, position);
 
       // Add a icon denoting current user location
       if (position != null && widget.isSelecting) {
@@ -125,12 +106,12 @@ class _MapScreenState extends State<MapScreen> {
           //     LatLng(widget.initialLocation.latitude,
           //         widget.initialLocation.longitude));
 
-          // controller.animateCamera(
-          //   CameraUpdate.newLatLng(
-          //     LatLng(widget.initialLocation.latitude,
-          //         widget.initialLocation.longitude),
-          //   ),
-          // );
+          controller.animateCamera(
+            CameraUpdate.newLatLng(
+              LatLng(widget.initialLocation.latitude,
+                  widget.initialLocation.longitude),
+            ),
+          );
         },
       ),
     );
