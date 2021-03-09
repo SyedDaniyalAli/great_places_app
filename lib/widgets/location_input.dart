@@ -7,7 +7,6 @@ import '../helpers/location_helper.dart';
 
 class LocationInput extends StatefulWidget {
   final Function onSelectPlace;
-
   LocationInput(this.onSelectPlace);
 
   @override
@@ -16,6 +15,15 @@ class LocationInput extends StatefulWidget {
 
 class _LocationInputState extends State<LocationInput> {
   String _imagePreviewUrl;
+
+  //Checking Permission for Location
+  Location location = new Location();
+
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  LocationData _locationData;
+
+
 
   void _showPreview(double latitude, double longitude) {
     final staticMapImageUrl = LocationHelper.generateLocationPreviewImage(
@@ -30,10 +38,27 @@ class _LocationInputState extends State<LocationInput> {
 
   Future<void> _getCurrentUserLocation() async {
     try {
-      final locData = await Location().getLocation();
-      print("Location Input: "+locData.latitude.toString()+","+locData.longitude.toString());
-      _showPreview(locData.latitude, locData.longitude);
-      widget.onSelectPlace(locData.latitude, locData.longitude);
+
+      _serviceEnabled = await location.serviceEnabled();
+      if (!_serviceEnabled) {
+        _serviceEnabled = await location.requestService();
+        if (!_serviceEnabled) {
+          return;
+        }
+      }
+
+      _permissionGranted = await location.hasPermission();
+      if (_permissionGranted == PermissionStatus.denied) {
+        _permissionGranted = await location.requestPermission();
+        if (_permissionGranted != PermissionStatus.granted) {
+          return;
+        }
+      }
+
+      _locationData = await location.getLocation();
+      print("Location Input: "+_locationData.latitude.toString()+","+_locationData.longitude.toString());
+      _showPreview(_locationData.latitude, _locationData.longitude);
+      widget.onSelectPlace(_locationData.latitude, _locationData.longitude);
     } catch (e) {
       return;
     }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
@@ -62,14 +63,20 @@ class LocationHelper {
     //   '&markers=color:red%7Clabel:C%$latitude,$longitude&key=$GOOGLE_API_KEY';
   }
 
+  // {'access_token=$MAPBOX_API_KEY': '{$MAPBOX_API_KEY}'}
   static Future<String> getPlaceAddress(double lat, double lng) async {
-    final url =
-        'https://api.mapbox.com/geocoding/v5/mapbox.places/$lng,$lat.json?access_token=$MAPBOX_API_KEY';
+    final url = Uri.https(
+        'api.mapbox.com',
+        '/geocoding/v5/mapbox.places/$lng,$lat.json',
+        {'access_token': MAPBOX_API_KEY});
+    // 'https://api.mapbox.com/geocoding/v5/mapbox.places/$lng,$lat.json?access_token=$MAPBOX_API_KEY'; deprecated
 
     final response = await http.get(url);
 
-      // print(json.decode(response.body)["features"][0]["place_name"]);
+    print(url);
+    print(json.decode(response.body));
 
-    return json.decode(response.body)["features"][0]["place_name"]??"No address line available";
+    return json.decode(response.body)["features"][0]["place_name"] ??
+        "No address line available";
   }
 }
